@@ -1,0 +1,249 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
+
+model Staff {
+  id         String    @id @default(cuid())
+  email      String    @unique
+  name       String
+  role       StaffRole
+  phone      String?
+  isActive   Boolean   @default(true)
+  supabaseId String    @unique
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  lastLogin  DateTime?
+  orders     Order[]
+
+  @@map("staff")
+}
+
+model Customer {
+  id        String    @id @default(cuid())
+  name      String
+  email     String?
+  phone     String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  orders    Order[]
+  payments  Payment[]
+
+  @@map("customers")
+}
+
+model Category {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  description String?
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  foodItems   FoodItem[]
+
+  @@map("categories")
+}
+
+model Portion {
+  id               String            @id @default(cuid())
+  name             String            @unique
+  description      String?
+  isActive         Boolean           @default(true)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  foodItemPortions FoodItemPortion[]
+  orderItems       OrderItem[]
+
+  @@map("portions")
+}
+
+model FoodItem {
+  id                 String                @id @default(cuid())
+  name               String
+  description        String?
+  imageUrl           String?
+  isActive           Boolean               @default(true)
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  categoryId         String
+  foodItemPortions   FoodItemPortion[]
+  foodItemIngredients FoodItemIngredient[]
+  category           Category              @relation(fields: [categoryId], references: [id])
+  orderItems         OrderItem[]
+
+  @@map("food_items")
+}
+
+model FoodItemPortion {
+  id         String   @id @default(cuid())
+  foodItemId String
+  portionId  String
+  price      Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  foodItem   FoodItem @relation(fields: [foodItemId], references: [id], onDelete: Cascade)
+  portion    Portion  @relation(fields: [portionId], references: [id])
+  ingredients FoodItemPortionIngredient[]
+
+  @@unique([foodItemId, portionId])
+  @@map("food_item_portions")
+}
+
+model Ingredient {
+  id                   String                @id @default(cuid())
+  name                 String                @unique
+  description          String?
+  unitOfMeasurement    String
+  currentStockQuantity Float                 @default(0)
+  reorderLevel         Float                 @default(0)
+  isActive             Boolean               @default(true)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  foodItemIngredients  FoodItemIngredient[]
+  foodItemPortionIngredients FoodItemPortionIngredient[]
+
+  @@map("ingredients")
+}
+
+model FoodItemIngredient {
+  id           String     @id @default(cuid())
+  foodItemId   String
+  ingredientId String
+  quantity     Float
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  foodItem     FoodItem   @relation(fields: [foodItemId], references: [id], onDelete: Cascade)
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  @@unique([foodItemId, ingredientId])
+  @@map("food_item_ingredients")
+}
+
+model FoodItemPortionIngredient {
+  id                String           @id @default(cuid())
+  foodItemPortionId String
+  ingredientId      String
+  quantity          Float
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  foodItemPortion   FoodItemPortion  @relation(fields: [foodItemPortionId], references: [id], onDelete: Cascade)
+  ingredient        Ingredient       @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  @@unique([foodItemPortionId, ingredientId])
+  @@map("food_item_portion_ingredients")
+}
+
+model Order {
+  tableNumber   Int?
+  staffId       String
+  status        OrderStatus @default(PENDING)
+  totalAmount   Float       @default(0)
+  notes         String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  id            Int         @id @default(autoincrement())
+  customerEmail String?
+  customerName  String?
+  customerPhone String?
+  customerId    String?
+  billNumber    String?
+  orderType     OrderType   @default(DINE_IN)
+  orderItems    OrderItem[]
+  customer      Customer?   @relation(fields: [customerId], references: [id])
+  staff         Staff       @relation(fields: [staffId], references: [id])
+  payments      Payment[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id              String   @id @default(cuid())
+  foodItemId      String
+  portionId       String
+  quantity        Int
+  unitPrice       Float
+  totalPrice      Float
+  specialRequests String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  orderId         Int
+  foodItem        FoodItem @relation(fields: [foodItemId], references: [id])
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  portion         Portion  @relation(fields: [portionId], references: [id])
+
+  @@map("order_items")
+}
+
+model Payment {
+  id              String      @id @default(cuid())
+  orderId         Int
+  customerId      String
+  amount          Float
+  receivedAmount  Float
+  balance         Float
+  paymentDate     DateTime    @default(now())
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  paymentMode     PaymentMode
+  referenceNumber String?
+  customer        Customer    @relation(fields: [customerId], references: [id])
+  order           Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Settings {
+  id                String   @id @default(cuid())
+  serviceChargeRate Float    @default(0.0)
+  theme             String   @default("blue")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("settings")
+}
+
+enum StaffRole {
+  WAITER
+  KITCHEN
+  MANAGER
+  CASHIER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  SERVED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMode {
+  CASH
+  CARD
+}
+
+enum OrderType {
+  DINE_IN
+  TAKEAWAY
+  ONLINE_ORDER
+}
