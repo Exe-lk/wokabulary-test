@@ -143,9 +143,14 @@ export default function CashierBillModal({ isOpen, onClose, order, onBillComplet
               phone: values.customerPhone,
             }),
           });
-          if (customerResponse.ok) {
-            const newCustomer = await customerResponse.json();
-            customerId = newCustomer.id;
+          if (!customerResponse.ok) {
+            const errorData = await customerResponse.json();
+            throw new Error(errorData.error || 'Failed to create customer');
+          }
+          const newCustomer = await customerResponse.json();
+          customerId = newCustomer.id;
+          if (!customerId) {
+            throw new Error('Failed to get customer ID after creation');
           }
         }
       }
@@ -165,10 +170,6 @@ export default function CashierBillModal({ isOpen, onClose, order, onBillComplet
         paymentMode: values.paymentMode,
         referenceNumber: values.paymentMode === 'CARD' ? values.referenceNumber : undefined,
       };
-
-      if (!customerId) {
-        throw new Error('Customer ID is required');
-      }
 
       // Create payment
       const paymentResponse = await fetch('/api/cashier/payments', {

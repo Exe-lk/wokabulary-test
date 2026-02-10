@@ -55,6 +55,7 @@ export default function ManageItems() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<FoodItem | null>(null);
+  const [togglingItemId, setTogglingItemId] = useState<string | null>(null);
 
   const fetchFoodItems = async () => {
     try {
@@ -132,6 +133,9 @@ export default function ManageItems() {
   };
 
   const toggleItemStatus = async (itemId: string, newStatus: boolean) => {
+    if (togglingItemId) return; // Prevent multiple clicks
+    
+    setTogglingItemId(itemId);
     try {
       const response = await fetch(`/api/admin/food-items/${itemId}`, {
         method: 'PUT',
@@ -165,6 +169,8 @@ export default function ManageItems() {
       });
     } catch (error) {
       showErrorAlert('Failed to update item status');
+    } finally {
+      setTogglingItemId(null);
     }
   };
 
@@ -244,7 +250,7 @@ export default function ManageItems() {
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Food Items</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Items</h1>
             <p className="text-sm text-gray-500 mt-1">Add, edit, and manage your menu items</p>
           </div>
         </div>
@@ -572,14 +578,23 @@ export default function ManageItems() {
                             </button>
                             <button
                               onClick={() => toggleItemStatus(item.id, !item.isActive)}
+                              disabled={togglingItemId === item.id}
                               className={`inline-flex items-center justify-center p-2 rounded-md transition-colors ${
-                                item.isActive
+                                togglingItemId === item.id
+                                  ? 'text-gray-400 cursor-not-allowed'
+                                  : item.isActive
                                   ? 'text-orange-600 hover:text-orange-900 hover:bg-orange-50'
                                   : 'text-green-600 hover:text-green-900 hover:bg-green-50'
                               }`}
                               title={item.isActive ? 'Disable' : 'Enable'}
                             >
-                              {item.isActive ? <FaTimesCircle className="w-4 h-4" /> : <FaCheckCircle className="w-4 h-4" />}
+                              {togglingItemId === item.id ? (
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-400"></div>
+                              ) : item.isActive ? (
+                                <FaTimesCircle className="w-4 h-4" />
+                              ) : (
+                                <FaCheckCircle className="w-4 h-4" />
+                              )}
                             </button>
                             <button
                               onClick={() => handleDeleteItem(item.id)}

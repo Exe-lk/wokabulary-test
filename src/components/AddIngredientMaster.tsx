@@ -13,6 +13,7 @@ export default function AddIngredientMaster({ isOpen, onClose, onIngredientAdded
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [unitOfMeasurement, setUnitOfMeasurement] = useState("");
+  const [currentStockQuantity, setCurrentStockQuantity] = useState("");
   const [reorderLevel, setReorderLevel] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -28,7 +29,13 @@ export default function AddIngredientMaster({ isOpen, onClose, onIngredientAdded
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, description, unitOfMeasurement, reorderLevel: parseFloat(reorderLevel) || 0 }),
+        body: JSON.stringify({ 
+          name, 
+          description, 
+          unitOfMeasurement, 
+          currentStockQuantity: parseFloat(currentStockQuantity) || 0,
+          reorderLevel: parseFloat(reorderLevel) || 0 
+        }),
       });
 
       if (!response.ok) {
@@ -39,6 +46,7 @@ export default function AddIngredientMaster({ isOpen, onClose, onIngredientAdded
       setName("");
       setDescription("");
       setUnitOfMeasurement("");
+      setCurrentStockQuantity("");
       setReorderLevel("");
       onIngredientAdded();
       onClose();
@@ -114,6 +122,33 @@ export default function AddIngredientMaster({ isOpen, onClose, onIngredientAdded
               <option value="ml">ml - Milliliter</option>
               <option value="L">l - Liter</option>
             </select>
+          </div>
+
+          <div>
+            <label
+              htmlFor="currentStockQuantity"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Current Stock Quantity
+            </label>
+            <input
+              type="number"
+              id="currentStockQuantity"
+              value={currentStockQuantity}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*\.?\d{0,2}$/.test(value)) {
+                  setCurrentStockQuantity(value);
+                }
+              }}
+              min="0"
+              step="0.01"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="e.g., 100.00"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Initial stock quantity when adding this ingredient
+            </p>
           </div>
 
           <div>

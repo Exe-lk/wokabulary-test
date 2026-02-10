@@ -456,7 +456,7 @@ export default function CustomerDetailsModal({
                         <option value="">-- Select a waiter --</option>
                         {waiters.map((waiter) => (
                           <option key={waiter.id} value={waiter.id}>
-                            {waiter.name} ({waiter.email})
+                            {waiter.name}
                           </option>
                         ))}
                       </Field>

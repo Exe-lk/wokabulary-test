@@ -84,7 +84,6 @@ export default function AdminKitchenManagement() {
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
   const [updatingAction, setUpdatingAction] = useState<string | null>(null);
-  const [showIngredients, setShowIngredients] = useState(false);
 
   useEffect(() => {
     // Check if admin/cashier is logged in
@@ -172,9 +171,26 @@ export default function AdminKitchenManagement() {
         throw new Error(errorData.error || 'Failed to update order status');
       }
 
+      // Fetch orders first to update the UI
       await fetchOrders();
+      
+      // Then show success message
+      const Swal = (await import('sweetalert2')).default;
+      await Swal.fire({
+        title: 'Success!',
+        text: `Order #${orderId} marked as ${newStatus.toLowerCase()}`,
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false,
+      });
     } catch (err: any) {
       console.error('Error updating status:', err);
+      const Swal = (await import('sweetalert2')).default;
+      await Swal.fire({
+        title: 'Error!',
+        text: err.message || 'Failed to update order status',
+        icon: 'error',
+      });
     } finally {
       setUpdatingOrderId(null);
       setUpdatingAction(null);
@@ -312,7 +328,7 @@ export default function AdminKitchenManagement() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Order Management</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
 
               <p className="text-sm text-gray-500 mt-1">Manage and update order statuses</p>
             </div>
@@ -320,18 +336,6 @@ export default function AdminKitchenManagement() {
               <div className="text-sm text-gray-500">
                 Auto-refresh: 10s
               </div>
-              <button
-                onClick={() => setShowIngredients(!showIngredients)}
-                className={`px-4 py-2 rounded-lg transition-colors flex items-center ${showIngredients
-                    ? 'bg-green-600 text-white hover:bg-green-700'
-                    : 'bg-gray-600 text-white hover:bg-gray-700'
-                  }`}
-              >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-                {showIngredients ? 'Hide Ingredients' : 'Show Ingredients'}
-              </button>
               <button
                 onClick={fetchOrders}
                 className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
@@ -366,156 +370,6 @@ export default function AdminKitchenManagement() {
         </div>
       </div>
 
-      {/* Ingredients Section */}
-      {showIngredients && (
-        <div className="bg-white border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="mb-4">
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900">Kitchen Ingredients & Stock</h2>
-                  <p className="text-sm text-gray-600">Monitor ingredient levels and reorder points</p>
-                </div>
-              </div>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Ingredient Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Description
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Unit of Measurement
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Current Stock
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Reorder Level
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Stock Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Last Updated
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {ingredients.map((ingredient) => (
-                    <tr key={ingredient.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{ingredient.name}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900 max-w-xs">
-                          {ingredient.description || 'No description'}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900 font-medium">{ingredient.unitOfMeasurement}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {ingredient.currentStockQuantity !== undefined
-                            ? <span className="font-semibold">{ingredient.currentStockQuantity}</span>
-                            : <span className="text-gray-400">N/A</span>
-                          }
-                          <span className="text-gray-500 ml-1">{ingredient.unitOfMeasurement}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          {ingredient.reorderLevel !== undefined
-                            ? <span className="font-semibold">{ingredient.reorderLevel}</span>
-                            : <span className="text-gray-400">N/A</span>
-                          }
-                          <span className="text-gray-500 ml-1">{ingredient.unitOfMeasurement}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${ingredient.currentStockQuantity && ingredient.reorderLevel
-                            ? ingredient.currentStockQuantity <= ingredient.reorderLevel
-                              ? 'bg-red-100 text-red-800 border border-red-200'
-                              : ingredient.currentStockQuantity <= ingredient.reorderLevel * 1.5
-                                ? 'bg-yellow-100 text-yellow-800 border border-yellow-200'
-                                : 'bg-green-100 text-green-800 border border-green-200'
-                            : 'bg-gray-100 text-gray-800 border border-gray-200'
-                          }`}>
-                          {ingredient.currentStockQuantity && ingredient.reorderLevel
-                            ? ingredient.currentStockQuantity <= ingredient.reorderLevel
-                              ? '⚠️ Low Stock'
-                              : ingredient.currentStockQuantity <= ingredient.reorderLevel * 1.5
-                                ? '⚠️ Medium Stock'
-                                : '✅ Good Stock'
-                            : 'N/A'
-                          }
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-500">
-                          {ingredient.updatedAt ? new Date(ingredient.updatedAt).toLocaleDateString() : 'N/A'}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Ingredients Summary for Pending Orders */}
-      {showIngredients && pendingOrders.length > 0 && (
-        <div className="bg-white border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <h3 className="text-sm font-medium text-blue-900 mb-3">Ingredients Needed for Pending Orders</h3>
-              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                {(() => {
-                  const ingredientTotals = new Map<string, { name: string; totalQuantity: number; unit: string }>();
-
-                  pendingOrders.forEach(order => {
-                    order.orderItems.forEach(item => {
-                      if (item.ingredients) {
-                        item.ingredients.forEach(ingredient => {
-                          const key = ingredient.ingredient.id;
-                          const existing = ingredientTotals.get(key);
-                          const quantity = ingredient.quantity * item.quantity;
-
-                          if (existing) {
-                            existing.totalQuantity += quantity;
-                          } else {
-                            ingredientTotals.set(key, {
-                              name: ingredient.ingredient.name,
-                              totalQuantity: quantity,
-                              unit: ingredient.ingredient.unitOfMeasurement
-                            });
-                          }
-                        });
-                      }
-                    });
-                  });
-
-                  return Array.from(ingredientTotals.values()).map((ingredient, index) => (
-                    <div key={index} className="flex justify-between items-center bg-white px-3 py-2 rounded border">
-                      <span className="text-sm font-medium text-gray-700">{ingredient.name}</span>
-                      <span className="text-sm text-blue-600 font-semibold">
-                        {ingredient.totalQuantity} {ingredient.unit}
-                      </span>
-                    </div>
-                  ));
-                })()}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Status Filter Tabs */}
       <div className="bg-white border-b">
