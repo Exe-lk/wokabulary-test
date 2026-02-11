@@ -257,21 +257,21 @@ export default function ManageUsers() {
               </button>
               <button
                 onClick={handleAddStaff}
-                className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-2 rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-colors flex items-center justify-center"
+                className="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-2 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-colors flex items-center justify-center"
                 title="Add Staff"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
               </button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-
+            
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           {/* Staff Table */}
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -343,9 +343,9 @@ export default function ManageUsers() {
             </tbody>
           </table>
 
-          </div>
+            </div>
 
-          {filteredUsers.length === 0 && (
+            {filteredUsers.length === 0 && (
               <div className="text-center py-12">
                 <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                   <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

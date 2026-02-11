@@ -100,7 +100,7 @@ export default function AdminSidebar({
       ),
     },
     {
-      name: "Billing",
+      name: "Billing and Orders",
       adminOnly: false,
       href: "/admin/waiter-orders",
       icon: (
@@ -269,7 +269,7 @@ export default function AdminSidebar({
             </div>
           </nav>
 
-          {/* Logout Button - Always at bottom */}
+          {/* Logout Button & Footer - Always at bottom */}
           <div className="flex-shrink-0 p-3 border-t border-white/10">
             <button
               onClick={handleLogout}
@@ -284,12 +284,17 @@ export default function AdminSidebar({
               )}
             </button>
             {!isCollapsed && (
-              <div className="mt-2 text-right">
-                <p className="text-xs text-white/30 font-light">
-                  Powered by <span className="text-white/60 font-semibold text-base">EXE.LK</span>
-                </p>
-                <p className="text-[10px] text-white/20 font-light mt-0.5">v{packageJson.version}</p>
-              </div>
+                <div className="mt-3 w-full flex flex-col items-center justify-center text-center">
+                  <p className="text-xs text-white/30 font-light">
+                    Powered by{" "}
+                    <span className="text-white/60 font-semibold text-base">
+                      EXE.LK
+                    </span>
+                  </p>
+                  <p className="text-[10px] text-white/20 font-light mt-0.5">
+                    v{packageJson.version}
+                  </p>
+                </div>
             )}
           </div>
         </div>

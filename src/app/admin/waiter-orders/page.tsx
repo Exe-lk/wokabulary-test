@@ -11,10 +11,11 @@ import FoodItemCard from '@/components/waiter/FoodItemCard';
 import OrderCart from '@/components/waiter/OrderCart';
 import OrdersList from '@/components/waiter/OrdersList';
 import AdminOrdersList from '@/components/waiter/AdminOrdersList';
-import CustomerDetailsModal from '@/components/waiter/CustomerDetailsModal';
-import QuickBillModal from '@/components/waiter/QuickBillModal';
-
-interface AdminUser {
+  import CustomerDetailsModal from '@/components/waiter/CustomerDetailsModal';
+  import QuickBillModal from '@/components/waiter/QuickBillModal';
+  import KitchenOrdersView from '@/components/waiter/KitchenOrdersView';
+  
+  interface AdminUser {
   id: string;
   email: string;
   name: string;
@@ -84,7 +85,7 @@ export default function WaiterOrdersPage() {
   const [error, setError] = useState("");
   const [activeCategory, setActiveCategory] = useState("");
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
-  const [activeTab, setActiveTab] = useState<'place-order' | 'my-orders'>('place-order');
+    const [activeTab, setActiveTab] = useState<'place-order' | 'my-orders' | 'kitchen-orders'>('place-order');
 
   // Customer details modal state
   const [showCustomerModal, setShowCustomerModal] = useState(false);
@@ -496,8 +497,8 @@ export default function WaiterOrdersPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Billing</h1>
-              <p className="text-sm text-gray-500 mt-1">Place new orders and view order history</p>
+              <h1 className="text-2xl font-bold text-gray-900">Billing and Orders</h1>
+              <p className="text-sm text-gray-500 mt-1">Place orders, manage bills, and track kitchen orders</p>
             </div>
             <div className="flex items-center space-x-4">
               {adminUser && (adminUser.role === 'CASHIER' || adminUser.role === 'admin') && (
@@ -544,6 +545,15 @@ export default function WaiterOrdersPage() {
           >
             Ongoing Orders
           </button>
+          <button
+            onClick={() => setActiveTab('kitchen-orders')}
+            className={`pb-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'kitchen-orders'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+          >
+            Kitchen Orders
+          </button>
         </div>
       </div>
 
@@ -555,9 +565,10 @@ export default function WaiterOrdersPage() {
             <AdminOrdersList userRole={adminUser.role} />
           ) : (
             <OrdersList staffId={adminUser.id} />
-          )
-        )}
-      </div>
+            )
+          )}
+         {activeTab === 'kitchen-orders' && <KitchenOrdersView />}
+        </div>
 
       {/* Customer Details Modal */}
       <CustomerDetailsModal

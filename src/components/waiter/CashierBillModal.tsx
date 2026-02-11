@@ -147,8 +147,8 @@ export default function CashierBillModal({ isOpen, onClose, order, onBillComplet
             const errorData = await customerResponse.json();
             throw new Error(errorData.error || 'Failed to create customer');
           }
-          const newCustomer = await customerResponse.json();
-          customerId = newCustomer.id;
+            const newCustomer = await customerResponse.json();
+            customerId = newCustomer.id;
           if (!customerId) {
             throw new Error('Failed to get customer ID after creation');
           }
@@ -470,7 +470,7 @@ export default function CashierBillModal({ isOpen, onClose, order, onBillComplet
                 </button>
                 <button
                   type="submit"
-                  disabled={isProcessing || !isValid || !dirty}
+                  disabled={isProcessing || !isValid}
                   className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
                 >
                   {isProcessing ? (
