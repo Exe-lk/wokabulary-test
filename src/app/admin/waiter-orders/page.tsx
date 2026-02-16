@@ -14,6 +14,7 @@ import AdminOrdersList from '@/components/waiter/AdminOrdersList';
   import CustomerDetailsModal from '@/components/waiter/CustomerDetailsModal';
   import QuickBillModal from '@/components/waiter/QuickBillModal';
   import KitchenOrdersView from '@/components/waiter/KitchenOrdersView';
+  import UnifiedAdminView from '@/components/waiter/UnifiedAdminView';
   
   interface AdminUser {
   id: string;
@@ -481,7 +482,7 @@ export default function WaiterOrdersPage() {
                 disabled={isPlacingOrder}
                 className="w-full py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
               >
-                {isPlacingOrder ? 'Placing Order...' : `Place Order - Rs. ${orderState.totalAmount.toFixed(2)}`}
+                {isPlacingOrder ? 'Placing Order...' : 'Place Order'}
               </button>
             </div>
           )}
@@ -525,50 +526,45 @@ export default function WaiterOrdersPage() {
           </div>
         </div>
       </div>
-      <div className="bg-white border-b border-gray-200 px-6 py-4 mt-4">
-        <div className="flex space-x-8">
-          <button
-            onClick={() => setActiveTab('place-order')}
-            className={`pb-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'place-order'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-          >
-            Place Order
-          </button>
-          <button
-            onClick={() => setActiveTab('my-orders')}
-            className={`pb-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'my-orders'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-          >
-            Ongoing Orders
-          </button>
-          <button
-            onClick={() => setActiveTab('kitchen-orders')}
-            className={`pb-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'kitchen-orders'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-          >
-            Kitchen Orders
-          </button>
+      {/* Show unified view for admin/cashier, tabs for waiters */}
+      {adminUser && (adminUser.role === 'CASHIER' || adminUser.role === 'admin') ? (
+        <div className="flex-1 overflow-hidden">
+          <UnifiedAdminView adminUser={adminUser} />
         </div>
-      </div>
+      ) : (
+        <>
+          <div className="bg-white border-b border-gray-200 px-6 py-4 mt-4">
+            <div className="flex space-x-8">
+              <button
+                onClick={() => setActiveTab('place-order')}
+                className={`pb-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'place-order'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+              >
+                Place Order
+              </button>
+              <button
+                onClick={() => setActiveTab('my-orders')}
+                className={`pb-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'my-orders'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+              >
+                Ongoing Orders
+              </button>
+            </div>
+          </div>
 
-      {/* Tab Content */}
-      <div className="flex-1 overflow-hidden">
-        {activeTab === 'place-order' && <PlaceOrderContent />}
-        {activeTab === 'my-orders' && adminUser && (
-          (adminUser.role === 'CASHIER' || adminUser.role === 'admin') ? (
-            <AdminOrdersList userRole={adminUser.role} />
-          ) : (
-            <OrdersList staffId={adminUser.id} />
-            )
-          )}
-         {activeTab === 'kitchen-orders' && <KitchenOrdersView />}
-        </div>
+          {/* Tab Content for Waiters */}
+          <div className="flex-1 overflow-hidden">
+            {activeTab === 'place-order' && <PlaceOrderContent />}
+            {activeTab === 'my-orders' && adminUser && (
+              <OrdersList staffId={adminUser.id} />
+            )}
+          </div>
+        </>
+      )}
 
       {/* Customer Details Modal */}
       <CustomerDetailsModal

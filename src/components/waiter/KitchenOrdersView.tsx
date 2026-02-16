@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { showErrorAlert } from '@/utils/alertUtils';
+import { showErrorAlert } from '@/lib/sweetalert';
 
 interface OrderItemIngredient {
   id: string;
