@@ -74,10 +74,6 @@ export default function OrdersManagement() {
 
   useEffect(() => {
     fetchOrders();
-    
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(fetchOrders, 30000);
-    return () => clearInterval(interval);
   }, [statusFilter]);
 
   // Filter orders based on search term

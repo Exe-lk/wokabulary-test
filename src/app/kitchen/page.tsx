@@ -95,12 +95,6 @@ export default function KitchenDashboard() {
 
     fetchOrders();
     fetchIngredients();
-    // Set up auto-refresh every 30 seconds
-    const interval = setInterval(() => {
-      fetchOrders();
-      fetchIngredients();
-    }, 30000);
-    return () => clearInterval(interval);
   }, [router, statusFilter]);
 
   // Debug: Monitor ingredients state changes

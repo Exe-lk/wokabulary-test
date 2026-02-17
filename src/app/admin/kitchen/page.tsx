@@ -108,12 +108,6 @@ export default function AdminKitchenManagement() {
 
     fetchOrders();
     fetchIngredients();
-    // Set up auto-refresh every 10 seconds for real-time updates
-    const interval = setInterval(() => {
-      fetchOrders();
-      fetchIngredients();
-    }, 10000);
-    return () => clearInterval(interval);
   }, [router, statusFilter]);
 
   // Reset to first page when filters change
@@ -333,9 +327,6 @@ export default function AdminKitchenManagement() {
               <p className="text-sm text-gray-500 mt-1">Manage and update order statuses</p>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-500">
-                Auto-refresh: 10s
-              </div>
               <button
                 onClick={fetchOrders}
                 className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"

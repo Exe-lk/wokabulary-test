@@ -133,24 +133,58 @@ export default function CashierBillModal({ isOpen, onClose, order, onBillComplet
         if (existingCustomer) {
           customerId = existingCustomer.id;
         } else {
-          // Create new customer
-          const customerResponse = await fetch('/api/customers', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              name: values.customerName,
-              email: values.customerEmail || null,
-              phone: values.customerPhone,
-            }),
-          });
-          if (!customerResponse.ok) {
-            const errorData = await customerResponse.json();
-            throw new Error(errorData.error || 'Failed to create customer');
+          // Try to find existing customer first
+          try {
+            const searchResponse = await fetch(`/api/customers/search?phone=${values.customerPhone}`);
+            if (searchResponse.ok) {
+              const foundCustomer = await searchResponse.json();
+              if (foundCustomer) {
+                customerId = foundCustomer.id;
+              }
+            }
+          } catch (searchError) {
+            // If search fails, continue to create
+            console.log('Customer search failed, will create new customer');
           }
-            const newCustomer = await customerResponse.json();
-            customerId = newCustomer.id;
+
+          // If customer not found, create new customer
           if (!customerId) {
-            throw new Error('Failed to get customer ID after creation');
+            const customerResponse = await fetch('/api/customers', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: values.customerName,
+                email: values.customerEmail || null,
+                phone: values.customerPhone,
+              }),
+            });
+            
+            if (!customerResponse.ok) {
+              const errorData = await customerResponse.json();
+              // If customer already exists error, try to fetch it
+              if (errorData.error && errorData.error.includes('already exists')) {
+                const searchResponse = await fetch(`/api/customers/search?phone=${values.customerPhone}`);
+                if (searchResponse.ok) {
+                  const foundCustomer = await searchResponse.json();
+                  if (foundCustomer) {
+                    customerId = foundCustomer.id;
+                  } else {
+                    throw new Error(errorData.error || 'Failed to create customer');
+                  }
+                } else {
+                  throw new Error(errorData.error || 'Failed to create customer');
+                }
+              } else {
+                throw new Error(errorData.error || 'Failed to create customer');
+              }
+            } else {
+              const newCustomer = await customerResponse.json();
+              customerId = newCustomer.id;
+            }
+            
+            if (!customerId) {
+              throw new Error('Failed to get customer ID after creation');
+            }
           }
         }
       }

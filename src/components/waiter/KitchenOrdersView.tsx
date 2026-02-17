@@ -64,11 +64,6 @@ export default function KitchenOrdersView() {
 
   useEffect(() => {
     fetchOrders();
-    // Set up auto-refresh every 10 seconds for real-time updates
-    const interval = setInterval(() => {
-      fetchOrders();
-    }, 10000);
-    return () => clearInterval(interval);
   }, [statusFilter]);
 
   // Reset to first page when filters change
@@ -264,9 +259,6 @@ export default function KitchenOrdersView() {
               />
             </div>
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-500">
-                Auto-refresh: 10s
-              </div>
               <button
                 onClick={fetchOrders}
                 className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"

@@ -51,6 +51,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Update order status to COMPLETED after successful payment
+    await prisma.order.update({
+      where: { id: parseInt(orderId) },
+      data: {
+        status: 'COMPLETED',
+      },
+    });
+
     return NextResponse.json(payment, { status: 201 });
   } catch (error) {
     console.error('Error creating payment:', error);

@@ -295,16 +295,16 @@ export default function AdminSidebar({
             </button>
             {!isCollapsed && (
                 <div className="mt-3 w-full flex flex-col items-center justify-center text-center">
-                  <p className="text-xs text-white/30 font-light">
+                <p className="text-xs text-white/30 font-light">
                     Powered by{" "}
                     <span className="text-white/60 font-semibold text-base">
                       EXE.LK
                     </span>
-                  </p>
+                </p>
                   <p className="text-[10px] text-white/20 font-light mt-0.5">
                     v{packageJson.version}
                   </p>
-                </div>
+              </div>
             )}
           </div>
         </div>
