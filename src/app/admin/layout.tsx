@@ -110,16 +110,16 @@ function AdminLayoutContent({ children }: { children: React.ReactNode }) {
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-white text-sm font-semibold">
-                  {adminUser.name.charAt(0).toUpperCase()}
-                </span>
-              </div>
               <div className="hidden sm:block text-left">
                 <p className="text-sm font-medium text-gray-900">{adminUser.name}</p>
                 <p className="text-xs text-gray-500">
                   {adminUser.role === 'CASHIER' ? 'Cashier' : adminUser.role === 'MANAGER' ? 'Manager' : 'Administrator'}
                 </p>
+              </div>
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-white text-sm font-semibold">
+                  {adminUser.name.charAt(0).toUpperCase()}
+                </span>
               </div>
             </div>
           </div>

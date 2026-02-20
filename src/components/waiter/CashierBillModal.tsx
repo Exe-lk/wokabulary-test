@@ -149,18 +149,18 @@ export default function CashierBillModal({ isOpen, onClose, order, onBillComplet
 
           // If customer not found, create new customer
           if (!customerId) {
-            const customerResponse = await fetch('/api/customers', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                name: values.customerName,
-                email: values.customerEmail || null,
-                phone: values.customerPhone,
-              }),
-            });
+          const customerResponse = await fetch('/api/customers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: values.customerName,
+              email: values.customerEmail || null,
+              phone: values.customerPhone,
+            }),
+          });
             
-            if (!customerResponse.ok) {
-              const errorData = await customerResponse.json();
+          if (!customerResponse.ok) {
+            const errorData = await customerResponse.json();
               // If customer already exists error, try to fetch it
               if (errorData.error && errorData.error.includes('already exists')) {
                 const searchResponse = await fetch(`/api/customers/search?phone=${values.customerPhone}`);
@@ -175,15 +175,15 @@ export default function CashierBillModal({ isOpen, onClose, order, onBillComplet
                   throw new Error(errorData.error || 'Failed to create customer');
                 }
               } else {
-                throw new Error(errorData.error || 'Failed to create customer');
-              }
+            throw new Error(errorData.error || 'Failed to create customer');
+          }
             } else {
-              const newCustomer = await customerResponse.json();
-              customerId = newCustomer.id;
+            const newCustomer = await customerResponse.json();
+            customerId = newCustomer.id;
             }
             
-            if (!customerId) {
-              throw new Error('Failed to get customer ID after creation');
+          if (!customerId) {
+            throw new Error('Failed to get customer ID after creation');
             }
           }
         }

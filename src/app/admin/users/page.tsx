@@ -170,7 +170,7 @@ export default function ManageUsers() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
           <div className="bg-white rounded-lg shadow p-4 border-l-4 border-blue-500">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 rounded-full">
@@ -223,6 +223,34 @@ export default function ManageUsers() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Waiters</p>
                 <p className="text-2xl font-semibold text-gray-900">{users.filter(u => u.role === 'WAITER').length}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-red-500">
+            <div className="flex items-center">
+              <div className="p-2 bg-red-100 rounded-full">
+                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Kitchen Staff</p>
+                <p className="text-2xl font-semibold text-gray-900">{users.filter(u => u.role === 'KITCHEN').length}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-4 border-l-4 border-yellow-500">
+            <div className="flex items-center">
+              <div className="p-2 bg-yellow-100 rounded-full">
+                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Cashiers</p>
+                <p className="text-2xl font-semibold text-gray-900">{users.filter(u => u.role === 'CASHIER').length}</p>
               </div>
             </div>
           </div>
@@ -309,8 +337,8 @@ export default function ManageUsers() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getRoleBadgeColor(user.role)}`}>
+                  <td className="px-6 py-4">
+                    <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${getRoleBadgeColor(user.role)}`}>
                       {user.role.charAt(0) + user.role.slice(1).toLowerCase()}
                     </span>
                   </td>
