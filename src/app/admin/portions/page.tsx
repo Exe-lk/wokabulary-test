@@ -236,6 +236,9 @@ export default function PortionsPage() {
                         Description
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
@@ -251,16 +254,7 @@ export default function PortionsPage() {
                               </span>
                             </div>
                             <div className="ml-4">
-                              <div className="flex items-center space-x-2">
-                                <div className="text-sm font-medium text-gray-900">{portion.name}</div>
-                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                  portion.isActive 
-                                    ? 'bg-green-100 text-green-800' 
-                                    : 'bg-red-100 text-red-800'
-                                }`}>
-                                  {portion.isActive ? 'Active' : 'Inactive'}
-                                </span>
-                              </div>
+                              <div className="text-sm font-medium text-gray-900">{portion.name}</div>
                             </div>
                           </div>
                         </td>
@@ -268,6 +262,15 @@ export default function PortionsPage() {
                           <div className="text-sm text-gray-900">
                             {portion.description || "No description"}
                           </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                            portion.isActive 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-red-100 text-red-800'
+                          }`}>
+                            {portion.isActive ? 'Active' : 'Inactive'}
+                          </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center space-x-2">
