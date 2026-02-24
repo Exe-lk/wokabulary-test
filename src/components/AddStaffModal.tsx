@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
 
 interface AddStaffModalProps {
   isOpen: boolean;
@@ -46,24 +45,28 @@ export default function AddStaffModal({ isOpen, onClose, onStaffAdded }: AddStaf
       const password = Math.random().toString(36).slice(-6);
       setGeneratedPassword(password);
       
-      // Create user in Supabase Auth using regular signup
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: password,
-        options: {
-          data: {
-            name: formData.name,
-            role: formData.role,
-          }
-        }
+      // Create user in Supabase Auth using admin API (no emails sent)
+      const authResponse = await fetch('/api/admin/staff/create-auth-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: password,
+          name: formData.name,
+          role: formData.role,
+        }),
       });
 
-      if (authError) {
-        throw new Error(authError.message);
+      const authData = await authResponse.json();
+
+      if (!authResponse.ok) {
+        throw new Error(authData.error || 'Failed to create user in Supabase Auth');
       }
 
-      if (!authData.user) {
-        throw new Error("Failed to create user in Supabase Auth");
+      if (!authData.user || !authData.user.id) {
+        throw new Error("Failed to create user - no user ID returned");
       }
 
       // Save staff member to database

@@ -1,20 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { prisma } from '@/lib/prisma';
 
-// Create Supabase client with service role key to bypass RLS
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-);
-
-// Update staff password
+// Update staff password using Supabase REST API directly
+// This bypasses all email notifications by using the Management API endpoint
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -44,22 +32,38 @@ export async function PUT(
       );
     }
 
-    // Update password in Supabase Auth using admin API
-    // Using admin API (service role key) does NOT send any emails - it directly updates the password
-    // This is a silent password reset - no notifications are sent to the user
-    // The admin.updateUserById method with service role key bypasses all email notifications
-    const { data, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
-      existingStaff.supabaseId,
-      { 
-        password: password
-      }
-    );
+    // Use Supabase Management API REST endpoint directly
+    // This method does NOT send any emails - it's a direct password update
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (updateError) {
-      console.error('Supabase password update error:', updateError);
+    if (!supabaseUrl || !serviceRoleKey) {
       return NextResponse.json(
-        { error: 'Failed to update password: ' + updateError.message },
+        { error: 'Supabase configuration missing' },
         { status: 500 }
+      );
+    }
+
+    // Call Supabase Management API directly via REST
+    // This endpoint updates password without triggering email notifications
+    const response = await fetch(`${supabaseUrl}/auth/v1/admin/users/${existingStaff.supabaseId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${serviceRoleKey}`,
+        'apikey': serviceRoleKey
+      },
+      body: JSON.stringify({
+        password: password
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Failed to update password' }));
+      console.error('Supabase password update error:', errorData);
+      return NextResponse.json(
+        { error: errorData.error?.message || errorData.error || 'Failed to update password' },
+        { status: response.status || 500 }
       );
     }
 
