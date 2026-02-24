@@ -47,10 +47,11 @@ export async function PUT(
     // Update password in Supabase Auth using admin API
     // Using admin API (service role key) does NOT send any emails - it directly updates the password
     // This is a silent password reset - no notifications are sent to the user
-    const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+    // The admin.updateUserById method with service role key bypasses all email notifications
+    const { data, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
       existingStaff.supabaseId,
       { 
-        password
+        password: password
       }
     );
 
