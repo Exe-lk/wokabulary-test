@@ -204,18 +204,27 @@ export default function WaiterDashboard() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-gradient-to-r from-blue-600 to-blue-700 shadow-lg sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">Waiter Dashboard</h1>
-              {staffUser && (
-                <span className="ml-4 text-sm text-gray-600">Welcome, {staffUser.name}</span>
-              )}
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-white">Waiter Dashboard</h1>
+                  {staffUser && (
+                    <p className="text-xs text-blue-100">Welcome, {staffUser.name}</p>
+                  )}
+                </div>
+              </div>
             </div>
             <button
               onClick={handleLogout}
-              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+              className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-colors backdrop-blur-sm border border-white/30"
             >
               Logout
             </button>
@@ -224,14 +233,14 @@ export default function WaiterDashboard() {
       </header>
 
       {/* Tab Navigation */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-gray-200 sticky top-16 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex space-x-8">
             <button
               onClick={() => setActiveTab('place-order')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+              className={`py-4 px-1 border-b-2 font-semibold text-sm transition-all ${
                 activeTab === 'place-order'
-                  ? 'border-blue-500 text-blue-600'
+                  ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -244,9 +253,9 @@ export default function WaiterDashboard() {
             </button>
             <button
               onClick={() => setActiveTab('my-orders')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+              className={`py-4 px-1 border-b-2 font-semibold text-sm transition-all ${
                 activeTab === 'my-orders'
-                  ? 'border-blue-500 text-blue-600'
+                  ? 'border-blue-600 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -280,19 +289,7 @@ export default function WaiterDashboard() {
             
             {/* Food Items Grid */}
             <div className="flex-1 overflow-y-auto p-4">
-              {currentCategoryItems.length === 0 ? (
-                <div className="flex items-center justify-center h-64 text-center">
-                  <div>
-                    <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                      <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                      </svg>
-                    </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No items available</h3>
-                    <p className="text-gray-600">This category doesn't have any items yet.</p>
-                  </div>
-                </div>
-              ) : (
+              {currentCategoryItems.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
                   {currentCategoryItems.map((item) => (
                     <FoodItemCard key={item.id} item={item} />

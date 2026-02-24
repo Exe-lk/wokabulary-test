@@ -297,9 +297,9 @@ export default function OrdersList({ staffId }: OrdersListProps) {
       </div>
 
       {/* Status Filter Tabs */}
-      <div className="bg-white border-b border-gray-200 mb-6">
+      <div className="bg-white border-b border-gray-200 mb-6 sticky top-0 z-30 shadow-sm">
         <div className="flex items-center justify-center">
-          <div className="flex bg-gray-100 rounded-lg p-1">
+          <div className="flex bg-gray-100 rounded-lg p-1 overflow-x-auto">
             <button
               onClick={() => setStatusFilter('')}
               className={`px-6 py-3 rounded-md text-sm font-medium transition-colors ${
@@ -366,7 +366,7 @@ export default function OrdersList({ staffId }: OrdersListProps) {
 
       {/* Filter Indicator */}
       {statusFilter && (
-        <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+        <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3 sticky top-16 z-20">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -391,24 +391,7 @@ export default function OrdersList({ staffId }: OrdersListProps) {
       )}
 
       {/* Orders List */}
-      {filteredOrders.length === 0 ? (
-        <div className="flex items-center justify-center h-64 text-center">
-          <div>
-            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No Orders Found</h3>
-            <p className="text-gray-600">
-              {statusFilter 
-                ? `No ${statusFilter.toLowerCase().replace('_', ' ')} orders at the moment.`
-                : "No active orders found. All orders are completed."
-              }
-            </p>
-          </div>
-        </div>
-      ) : (
+      {filteredOrders.length > 0 && (
         <div className="space-y-4">
           {filteredOrders.map((order) => (
             <div
