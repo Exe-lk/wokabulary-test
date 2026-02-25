@@ -298,7 +298,7 @@ export default function ManageUsers() {
             
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           {/* Staff Table */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto scrollbar-hide">
               <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>

@@ -206,26 +206,35 @@ export default function PortionsPage() {
 
             {filteredPortions.length === 0 ? (
               <div className="text-center py-12">
-                {searchTerm ? (
-                  <>
-                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                  <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {searchTerm ? (
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    <h3 className="mt-2 text-sm font-medium text-gray-900">No portions found</h3>
-                    <p className="mt-1 text-sm text-gray-500">Try adjusting your search terms.</p>
-                  </>
-                ) : (
-                  <>
-                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    ) : (
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                    <h3 className="mt-2 text-sm font-medium text-gray-900">No portions</h3>
-                    <p className="mt-1 text-sm text-gray-500">Get started by creating a new portion size.</p>
-                  </>
+                    )}
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  {searchTerm ? 'No portions found' : 'No portions'}
+                </h3>
+                <p className="text-gray-500">
+                  {searchTerm 
+                    ? `No portions match "${searchTerm}". Try adjusting your search.`
+                    : 'Get started by creating a new portion size.'
+                  }
+                </p>
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="mt-4 text-sm text-blue-600 hover:text-blue-800"
+                  >
+                    Clear search
+                  </button>
                 )}
               </div>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto scrollbar-hide">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
