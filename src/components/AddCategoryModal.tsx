@@ -95,7 +95,6 @@ export default function AddCategoryModal({ isOpen, onClose, onCategoryAdded }: A
               <p className="text-red-600 text-sm">{error}</p>
             </div>
           )}
-
           <div className="flex space-x-3 pt-4">
             <button
               type="button"

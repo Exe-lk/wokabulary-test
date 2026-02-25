@@ -10,7 +10,6 @@ interface AddFoodItemModalProps {
   onClose: () => void;
   onFoodItemAdded: () => void;
 }
-
 interface FoodItemFormData {
   name: string;
   description: string;
